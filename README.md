@@ -14,7 +14,7 @@
 
 ### 3.Blinker
 
-​	利用Blinker接入米家实现语音联动，代码内还有一个button，懒得删了，不用可以忽略
+​	利用Blinker接入米家实现语音联动，代码内还有一个button，不用可以忽略
 
 ### 4.Dependency
 
@@ -67,4 +67,7 @@
 - 3D打印机(用于打印模型外壳)
 
  ![image](https://github.com/1EM0NS/ESP32-Weather-Clock-smartconfig-Blinker/blob/main/img/1.png)
+
+
+---
 
