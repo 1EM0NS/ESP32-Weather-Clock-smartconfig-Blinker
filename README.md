@@ -14,7 +14,46 @@
 
 ### 3.Blinker
 
-​	利用Blinker接入米家实现语音联动，代码内还有一个button，不用可以忽略
+​	利用Blinker接入米家实现语音联动，代码内还有一个button，懒得删了，不用可以忽略
+
+### 4.Dependency
+
+```
+|-- TFT_eSPI @ 2.4.75
+|   |-- SPI @ 2.0.0
+|   |-- SPIFFS @ 2.0.0
+|   |   |-- FS @ 2.0.0
+|   |-- FS @ 2.0.0
+|   |-- LittleFS @ 2.0.0
+|   |   |-- FS @ 2.0.0
+|-- IRremoteESP8266 @ 2.8.2
+|-- NTPClient @ 3.2.1
+|-- ArduinoJson @ 6.19.4
+|-- IRsendMeidi
+|   |-- IRremoteESP8266 @ 2.8.2
+|-- Blinker @ 0.3.9
+|   |-- Update @ 2.0.0
+|   |-- ESPmDNS @ 2.0.0
+|   |   |-- WiFi @ 2.0.0
+|   |-- WiFi @ 2.0.0
+|   |-- ESP32 BLE Arduino @ 2.0.0
+|   |-- EEPROM @ 2.0.0
+|   |-- HTTPClient @ 2.0.0
+|   |   |-- WiFi @ 2.0.0
+|   |   |-- WiFiClientSecure @ 2.0.0
+|   |   |   |-- WiFi @ 2.0.0
+|   |-- Ticker @ 2.0.0
+|   |-- WiFiClientSecure @ 2.0.0
+|   |   |-- WiFi @ 2.0.0
+|   |-- FS @ 2.0.0
+|   |-- SPIFFS @ 2.0.0
+|   |   |-- FS @ 2.0.0
+|   |-- Ethernet @ 2.0.0
+|   |   |-- WiFi @ 2.0.0
+|   |-- SPI @ 2.0.0
+|-- SPI @ 2.0.0
+|-- WiFi @ 2.0.0
+```
 
 ---
 
