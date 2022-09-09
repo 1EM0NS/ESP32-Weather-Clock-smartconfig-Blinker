@@ -66,7 +66,7 @@
 - 红外发射模块(不知道空调编码需要购买接收模块)
 - 3D打印机(用于打印模型外壳)
 
- ![image](https://raw.githubusercontent.com/1EM0NS/ESP32-Weather-Clock-smartconfig-Blinker/main/img/1.png)
+ ![img](https://raw.githubusercontent.com/1EM0NS/ESP32-Weather-Clock-smartconfig-Blinker/main/img/1.png)
 
 
 ---
