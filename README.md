@@ -1,6 +1,6 @@
 # ESP32-Weather-Clock-smartconfig-Blinker
 
-
+红外功能适配RN02D，搭配我的仓库使用
 
 ## Software
 
