@@ -8,11 +8,11 @@
 #include <WiFi.h>
 #include <WiFiUdp.h>
 #include <String.h>
-#include "IRsendMeidi.h"
+#include <IRsendMeidi.h>
 int count =0;
 bool WIFI_Status =true;
 #define BLINKER_MIOT_AIRCONDITION
-// #define BLINKER_PRINT Serial
+#define BLINKER_PRINT Serial
 #define BLINKER_WIFI
 #define BLINKER_ESP_SMARTCONFIG
 #include <Blinker.h>
@@ -31,11 +31,11 @@ unsigned long epochTime;
 unsigned int bg;
 unsigned int nw, tw, aw;
 bool night;
-const char *auth = "  ";  //你的Blinker设备识别码
+const char *auth = "6365*****";  //你的Blinker密钥
 // const char *ssid = "Mi 10 Ultra"; 
 // const char *password = "12345678";
-const char *ssid = "网_ap"; 
-const char *password = "178490049";
+const char *ssid = "网_ap"; #wifi账号
+const char *password = "W1980824";#wifi密码
 char determineqing[] = "晴";
 char determineduoyun[] = "多云";
 char determineyin[] = "阴";
@@ -206,21 +206,22 @@ void get_time()
 void smartConfig()
 {
 
-Serial.println("\r\nWait for Smartconfig...");
+// Serial.println("\r\nWait for Smartconfig...");
 
-Blinker.begin(auth);
+// Blinker.begin(auth);
 delay(1000);
 while (1)
 {
 tft.print(WiFi.status());
-Serial.print(WiFi.status());
+// Blinker.begin(auth, ssid, password);
+Blinker.begin(auth);
+// Serial.print(WiFi.status());
 delay(1000);
 if (WiFi.status()==3)
 {
 Serial.println("SmartConfig Success");
 Serial.printf("SSID:%s\r\n", WiFi.SSID().c_str());
 Serial.printf("PSW:%s\r\n", WiFi.psk().c_str());
-// Blinker.begin(auth,WiFi.SSID().c_str(),WiFi.psk().c_str());
 
 break;
 }
@@ -230,8 +231,8 @@ break;
 void connect_wifi()
 {
     tft.pushImage(0, 0, 240, 240, start_display);
-        smartConfig();
-          Serial.println("连接成功");
+    smartConfig();
+    Serial.println("连接成功");
     Serial.print("IP:");
     Serial.println(WiFi.localIP());
     }
@@ -239,46 +240,52 @@ void connect_wifi()
 
 void startup_display()
 {
-  tft.init();
+  tft.begin();
   tft.setSwapBytes(true);
   connect_wifi();
   tft.pushImage(0, 0, 240, 240, success_con);
+  Serial.println("success");
 
   delay(500);
 }
-void start_temp()
-{
-  // Serial.begin(9600);
 
-  const int httpPort = 80;
-  client.connect(host, httpPort);
-  delay(100);
-  // if (!client.connect(host, httpPort))
-  // {
-  //   Serial.println("connection failed"); 
-  //   return;
-  // }
-}
 void get_temp()
-{
-  start_temp();
+{ Serial.println("get_temp");
   // URL请求地址
-  String url = "/v3/weather/daily.json?key=你的心知天气私钥&location=jiangsusuzhou&language=zh-Hans&unit=c&start=0&days=5";
+  String url = "https://api.seniverse.com/v3/weather/daily.json?key=心知密钥&location=jiangsusuzhou&language=zh-Hans&unit=c&start=0&days=5";
   //发送网络请求
-  client.print(String("GET ") + url + " HTTP/1.1\r\n" +
-               "Host: " + host + "\r\n" +
-               "Connection: close\r\n\r\n");
-  delay(1000);
-
+  HTTPClient http;
+  http.begin(url);
+  int httpCode = http.GET();
   String answer;
-  while (client.available())
+  if (httpCode > 0)
   {
-    String line = client.readStringUntil('\r');
-    answer += line;
+    answer = http.getString();
+    Serial.println(answer);
   }
-  // client.stop();
-  // Serial.println();
-  // Serial.println("closing connection");
+  http.end();
+  // client.print(String("GET ") + url + " HTTP/1.1" +
+  //              "Host: " + host + "\r\n" +
+  //              "Connection: close\r\n\r\n");
+  // while (!client.available())
+  // {
+  //   Serial.println("connecting to server...");
+  //   delay(1000);
+  // }
+  // Serial.println("request sent");
+ 
+  // while (client.available())//等待服务器响应
+  // {//读取服务器响应
+  //   String line = client.readStringUntil('\r');
+  //   answer += line;
+  // }
+  Serial.println("answer was:");
+  Serial.println("==========");
+  Serial.println(answer);
+  Serial.println("==========");
+  client.stop();
+  Serial.println();
+  Serial.println("closing connection");
   String jsonAnswer;
   int jsonIndex;
   for (int i = 0; i < answer.length(); i++)
@@ -300,8 +307,7 @@ void get_temp()
 
   if (error)
   {
-    // Serial.print("deserializeJson() failed: ");
-    // Serial.println(error.c_str());
+    Serial.println("deserializeJson() failed: ");
     return;
   }
 
@@ -441,7 +447,7 @@ void show_txt(uint16_t x, uint16_t y, uint16_t c, uint8_t s, uint8_t f, const St
   tft.println(data);
 }
 void show_weather()
-{
+{Serial.println("show_weather");
   while (now_weather == "")
     get_temp;
 
@@ -452,9 +458,9 @@ void show_weather()
   showMyFonts(1, 90, now_weather.c_str(), TFT_WHITE, 36);
   showMyFonts(80, 90, t_weather.c_str(), TFT_WHITE, 36);
   showMyFonts(160, 90, a_weather.c_str(), TFT_WHITE, 36);
-  show_txt(10, 5, Time_YELLOW, 2, 1, n_time.month + "/" + n_time.day);
-  show_txt(95, 5, Time_YELLOW, 2, 1, n_time.month + "/" + n_time.dayi);
-  show_txt(175, 5, Time_YELLOW, 2, 1, n_time.month + "/" + n_time.dayii);
+  show_txt(10, 5, TFT_YELLOW, 2, 1, n_time.month + "/" + n_time.day);
+  show_txt(95, 5, TFT_YELLOW, 2, 1, n_time.month + "/" + n_time.dayi);
+  show_txt(175, 5, TFT_YELLOW, 2, 1, n_time.month + "/" + n_time.dayii);
 
   show_txt(15, 140, TFT_WHITE, 2, 1, now_low_tem + ".C");
   show_txt(15, 160, TFT_WHITE, 2, 1, now_high_tem + ".C");
@@ -480,12 +486,12 @@ void show_time()
   current_t = epochTime;
   tft.pushImage(0, 0, 240, 240, get_time_model);
   if (timeClient.getMinutes() < 10 || timeClient.getMinutes() == 0)
-    show_txt(8, 90, Time_YELLOW, 5, 1, n_time.hour + ":" + "0" + n_time.minutes);
+    show_txt(8, 90, TFT_YELLOW, 5, 1, n_time.hour + ":" + "0" + n_time.minutes);
   else
-    show_txt(8, 90, Time_YELLOW, 5, 1, n_time.hour + ":" + n_time.minutes);
+    show_txt(8, 90, TFT_YELLOW, 5, 1, n_time.hour + ":" + n_time.minutes);
 
-  show_txt(24, 18, Time_YELLOW, 3, 1, n_time.year + "/" + n_time.month + "/" + n_time.day);
-  showMyFonts(15, 170, n_time.weekday.c_str(), Time_YELLOW, 50);
+  show_txt(24, 18, TFT_YELLOW, 3, 1, n_time.year + "/" + n_time.month + "/" + n_time.day);
+  showMyFonts(15, 170, n_time.weekday.c_str(), TFT_YELLOW, 50);
   while (epochTime - current_t < 5)
   {
     Blinker.run();
@@ -497,16 +503,30 @@ void show_time()
     }
     get_time();
   }
+  Serial.println("show_time");
 }
 
 void button1_callback(const String &state)
-{
+{ if(oState = 1)
+  {
+    irsendmeidi.setPowers(0); //关闭空调
+    BlinkerMIOT.powerState("off");
+    BlinkerMIOT.print();
+    oState = 0;
+  }
+  else
+  {
   irsendmeidi.setPowers(1); //打开空调
-  delay(5000);
+  delay(500);
   irsendmeidi.setModes(1); //设置为制冷模式
-  delay(5000);
-  // irsendmeidi.setTemps(26); //设置温度为26度
-  // delay(5000);
+  delay(500);
+  irsendmeidi.setFanSpeeds(5); //设置风速为大风
+  irsendmeidi.setTemps(24); //设置温度为24度
+  BlinkerMIOT.powerState("on");
+  BlinkerMIOT.print();
+  delay(2000);
+  oState = 1;
+  }
 }
 
 void miotPowerState(const String &state)
@@ -514,21 +534,19 @@ void miotPowerState(const String &state)
   BLINKER_LOG("need set power state: ", state);
 
   if (state == BLINKER_CMD_ON)
-  {
-    irsendmeidi.setPowers(1); //打开空调
+  { irsendmeidi.setPowers(1); //打开空调
     BlinkerMIOT.powerState("on");
     BlinkerMIOT.print();
     oState = true;
   }
   else if (state == BLINKER_CMD_OFF)
-  {
-    irsendmeidi.setPowers(0); //关闭空调
+  { irsendmeidi.setPowers(0); //关闭空调
     BlinkerMIOT.powerState("off");
     BlinkerMIOT.print();
     oState = false;
   }
 }
-void miotVSwingState(const String &state)
+void miotVSwingState(const String &state) #小爱同学回调函数
 {
   BLINKER_LOG("need set VSwing state: ", state);
   // vertical-swing
@@ -550,14 +568,15 @@ void miotVSwingState(const String &state)
   }
 }
 void miotLevel(uint8_t level)
-{
+{  BlinkerMIOT.level(level);
+  BlinkerMIOT.print();
   switch (level)
   {
   case 1:
-    irsendmeidi.setFanSpeeds(3);
+    irsendmeidi.setFanSpeeds(1);
     break;
   case 2:
-    irsendmeidi.setFanSpeeds(4);
+    irsendmeidi.setFanSpeeds(2);
   case 3:
     irsendmeidi.setFanSpeeds(5);
     break;
@@ -565,12 +584,14 @@ void miotLevel(uint8_t level)
   BLINKER_LOG("need set level: ", level);
   // 0:AUTO MODE, 1-3 LEVEL
 
-  BlinkerMIOT.level(level);
-  BlinkerMIOT.print();
+
 }
 void miotMode(const String &mode, const String &state)
 {
+BLINKER_LOG("need set mode: ", mode, ", state:", state);
 
+  BlinkerMIOT.mode(mode, state);
+  BlinkerMIOT.print();
   if (strstr(mode.c_str(), cool) != 0)
     irsendmeidi.setModes(1);
   if (strstr(mode.c_str(), hot) != 0)
@@ -584,10 +605,7 @@ void miotMode(const String &mode, const String &state)
   // uv UV杀菌
   // unsb un-straight-blowing 防直吹
 
-  BLINKER_LOG("need set mode: ", mode, ", state:", state);
-
-  BlinkerMIOT.mode(mode, state);
-  BlinkerMIOT.print();
+  
 }
 void miotTemp(uint8_t temp)
 {
@@ -598,15 +616,15 @@ void miotTemp(uint8_t temp)
 }
 
 void setup()
-{Serial.begin(9600);
-BLINKER_DEBUG.stream(Serial);
-
-BLINKER_DEBUG.debugAll();
+{
+Serial.begin(9600);
+// BLINKER_DEBUG.stream(Serial);
+// BLINKER_DEBUG.debugAll();
   irsendmeidi.begin_2();                                     //初始化
   irsendmeidi.setZBPL(38);                                   //设置红外载波频率，单位kHz,不调用此函数则默认38，由于未知原因，我设置为40，示波器测得频率为38左右，当发送信号后没反应时，尝试更改此值。
   irsendmeidi.setCodeTime(500, 1600, 550, 4400, 4400, 5220); //设置信号的高低电平占比，分别为标记位，1位，0位，前导码低电平，前导码高电平，间隔码高电平
                                                              //不调用此函数默认为（500,1600,550,4400,4400,5220）
-
+  
   startup_display();
   BlinkerMIOT.attachPowerState(miotPowerState);
   BlinkerMIOT.attachVSwing(miotVSwingState);
